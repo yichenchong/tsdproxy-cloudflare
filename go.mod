@@ -1,4 +1,4 @@
-module github.com/almeidapaulopt/tsdproxy
+module github.com/yichenchong/tsdproxy-cloudflare
 
 go 1.24.2
 

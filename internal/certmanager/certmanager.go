@@ -11,17 +11,17 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"context"
-	
+	"errors"
+
 	"github.com/almeidapaulopt/tsdproxy/internal/config"
-	"github.com/rs/zerolog/log"
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 )
 
 type CertManager struct {
-	config config.LetsEncryptConfig
+	config      config.LetsEncryptConfig
 	certManager *autocert.Manager
 }
 
@@ -44,30 +44,31 @@ func NewCertManager(cfg config.LetsEncryptConfig) (*CertManager, error) {
 		},
 	}
 
-	api, err := cloudflare.NewWithToken(cfg.CloudflareAPIToken)
+	api, err := cloudflare.New(cfg.CloudflareAPIToken, "")
 	if err != nil {
 		return nil, fmt.Errorf("creating Cloudflare API client: %w", err)
 	}
 
 	// Fetch the zone ID
-	zoneID, err := api.ZoneIDByName(cfg.DomainName)
+	_, err = api.ZoneIDByName(cfg.DomainName)
 	if err != nil {
 		return nil, fmt.Errorf("getting Cloudflare zone ID: %w", err)
 	}
 
 	cm := &CertManager{
-		config: cfg,
+		config:      cfg,
 		certManager: m,
 	}
 
+	// Configure the ACME client to use the Cloudflare DNS challenge.
 	cm.certManager.Client = &acme.Client{
 		DirectoryURL: acme.LetsEncryptURL,
 		ChallengeSolvers: map[string]acme.Solver{
 			acme.ChallengeTypeDNS01: &cloudflareSolver{
-				apiToken: cfg.CloudflareAPIToken,
+				apiToken:  cfg.CloudflareAPIToken,
 				domainName: cfg.DomainName,
-				api: api,
-				zoneID: zoneID,
+				api:       api,
+				zoneID:    zoneID,
 			},
 		},
 	}
@@ -144,7 +145,7 @@ func (cm *CertManager) ListenAndServeTLS(ctx context.Context, hostname string, p
 
 	// Check if certs exists
 	certPath := filepath.Join(cm.config.CacheDir, cm.config.DomainName)
-	if _, err := os.Stat(certPath + ".crt"); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(certPath+".crt"); errors.Is(err, os.ErrNotExist) {
 		log.Info().Msg("No certificate found, requesting...")
 		_, err := cm.certManager.GetCertificate(&tls.ClientHelloInfo{ServerName: cm.config.DomainName})
 		if err != nil {
@@ -162,12 +163,42 @@ func (cm *CertManager) ListenAndServeTLS(ctx context.Context, hostname string, p
 	return handler(listener, tlsConfig)
 }
 
+func (cm *CertManager) SetupCloudflareChallenge(ctx context.Context) error {
+	if !cm.config.Enabled {
+		return nil
+	}
+
+	api, err := cloudflare.New(cm.config.CloudflareAPIToken, "")
+	if err != nil {
+		return fmt.Errorf("creating Cloudflare API client: %w", err)
+	}
+
+	zoneID, err := api.ZoneIDByName(cm.config.DomainName)
+	if err != nil {
+		return fmt.Errorf("getting Cloudflare zone ID: %w", err)
+	}
+
+	// Configure the ACME client to use the Cloudflare DNS challenge.
+	cm.certManager.Client = &acme.Client{
+		DirectoryURL: acme.LetsEncryptURL,
+		ChallengeSolvers: map[string]acme.Solver{
+			acme.ChallengeTypeDNS01: &cloudflareSolver{
+				apiToken:  cm.config.CloudflareAPIToken,
+				domainName: cm.config.DomainName,
+				api:       api,
+				zoneID:    zoneID,
+			},
+		},
+	}
+
+	return nil
+}
 
 type cloudflareSolver struct {
-	apiToken string
+	apiToken  string
 	domainName string
-	api *cloudflare.API
-	zoneID string
+	api       *cloudflare.API
+	zoneID    string
 }
 
 func (c *cloudflareSolver) Present(ctx context.Context, challenge *acme.Challenge, domain string, value string) error {
@@ -178,15 +209,16 @@ func (c *cloudflareSolver) Present(ctx context.Context, challenge *acme.Challeng
 
 	record := cloudflare.DNSRecord{Type: "TXT", Name: recordName, Content: value, TTL: 60, Proxied: cloudflare.BoolPtr(false)}
 
-	resp, err := c.api.CreateDNSRecord(ctx, c.zoneID, record)
+	resp, err := c.api.CreateDNSRecord(ctx, c.zoneID, cloudflare.CreateDNSRecordParams{Record: record})
 	if err != nil {
 		log.Error().Err(err).Msg("Error creating TXT record in Cloudflare DNS")
 		return err
 	}
 
-	if !resp.Success {
-		log.Error().Interface("errors", resp.Errors).Msg("Error creating TXT record in Cloudflare DNS")
-		return fmt.Errorf("error creating TXT record in Cloudflare DNS: %v", resp.Errors)
+	// Check if the response is successful
+	if len(resp.Response.Errors) > 0 {
+		log.Error().Interface("errors", resp.Response.Errors).Msg("Error creating TXT record in Cloudflare DNS")
+		return fmt.Errorf("error creating TXT record in Cloudflare DNS: %v", resp.Response.Errors)
 	}
 
 	return nil
@@ -205,7 +237,6 @@ func (c *cloudflareSolver) CleanUp(ctx context.Context, challenge *acme.Challeng
 		return err
 	}
 
-
 	// Delete all records with the same name
 	for _, r := range records {
 		resp, err := c.api.DeleteDNSRecord(ctx, c.zoneID, r.ID)
@@ -214,9 +245,10 @@ func (c *cloudflareSolver) CleanUp(ctx context.Context, challenge *acme.Challeng
 			return err
 		}
 
-		if !resp.Success {
-			log.Error().Interface("errors", resp.Errors).Msg("Error deleting TXT record in Cloudflare DNS")
-			return fmt.Errorf("error deleting TXT record in Cloudflare DNS: %v", resp.Errors)
+		// Check if the response is successful
+		if len(resp.Response.Errors) > 0 {
+			log.Error().Interface("errors", resp.Response.Errors).Msg("Error deleting TXT record in Cloudflare DNS")
+			return fmt.Errorf("error deleting TXT record in Cloudflare DNS: %v", resp.Response.Errors)
 		}
 	}
 

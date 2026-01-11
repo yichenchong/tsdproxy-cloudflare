@@ -11,9 +11,9 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/almeidapaulopt/tsdproxy/internal/config"
-	"github.com/almeidapaulopt/tsdproxy/internal/model"
-	"github.com/almeidapaulopt/tsdproxy/internal/targetproviders"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/config"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/model"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/targetproviders"
 
 	"github.com/creasty/defaults"
 	"github.com/fsnotify/fsnotify"

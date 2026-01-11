@@ -17,7 +17,7 @@ Docker Compose:
 ```yaml docker-compose.yml
 services:
   tsdproxy:
-    image: almeidapaulopt/tsdproxy:1
+    image: yichenchong/tsdproxy-cloudflare:1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - datadir:/data

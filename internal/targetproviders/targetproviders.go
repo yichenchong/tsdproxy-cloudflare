@@ -6,7 +6,7 @@ package targetproviders
 import (
 	"context"
 
-	"github.com/almeidapaulopt/tsdproxy/internal/model"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/model"
 )
 
 type (

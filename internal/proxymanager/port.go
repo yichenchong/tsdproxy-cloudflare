@@ -13,9 +13,9 @@ import (
 	"net/http/httputil"
 	"sync"
 
-	"github.com/almeidapaulopt/tsdproxy/internal/consts"
-	"github.com/almeidapaulopt/tsdproxy/internal/core"
-	"github.com/almeidapaulopt/tsdproxy/internal/model"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/consts"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/core"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/model"
 
 	"github.com/rs/zerolog"
 )

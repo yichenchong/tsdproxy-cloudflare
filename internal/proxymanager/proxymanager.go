@@ -10,13 +10,13 @@ import (
 
 	"github.com/rs/zerolog"
 
-	"github.com/almeidapaulopt/tsdproxy/internal/config"
-	"github.com/almeidapaulopt/tsdproxy/internal/model"
-	"github.com/almeidapaulopt/tsdproxy/internal/proxyproviders"
-	"github.com/almeidapaulopt/tsdproxy/internal/proxyproviders/tailscale"
-	"github.com/almeidapaulopt/tsdproxy/internal/targetproviders"
-	"github.com/almeidapaulopt/tsdproxy/internal/targetproviders/docker"
-	"github.com/almeidapaulopt/tsdproxy/internal/targetproviders/list"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/config"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/model"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/proxyproviders"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/proxyproviders/tailscale"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/targetproviders"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/targetproviders/docker"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/targetproviders/list"
 )
 
 type (

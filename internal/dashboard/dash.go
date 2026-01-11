@@ -6,11 +6,11 @@ package dashboard
 import (
 	"sync"
 
-	"github.com/almeidapaulopt/tsdproxy/internal/core"
-	"github.com/almeidapaulopt/tsdproxy/internal/model"
-	"github.com/almeidapaulopt/tsdproxy/internal/proxymanager"
-	"github.com/almeidapaulopt/tsdproxy/internal/ui/pages"
-	"github.com/almeidapaulopt/tsdproxy/web"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/core"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/model"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/proxymanager"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/ui/pages"
+	"github.com/yichenchong/tsdproxy-cloudflare/web"
 
 	"github.com/rs/zerolog"
 )

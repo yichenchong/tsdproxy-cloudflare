@@ -65,9 +65,9 @@ builds:
       - -tags=prod
     ldflags:
       - -s -w
-      - -X "github.com/almeidapaulopt/tsdproxy/internal/core.version={{ .Version  }}"
-      - -X "github.com/almeidapaulopt/tsdproxy/internal/core.BuildDate={{ .Date }}"
-      - -X "github.com/almeidapaulopt/tsdproxy/internal/core.GitCommit={{ .ShortCommit }}"
+      - -X "github.com/yichenchong/tsdproxy-cloudflare/internal/core.version={{ .Version  }}"
+      - -X "github.com/yichenchong/tsdproxy-cloudflare/internal/core.BuildDate={{ .Date }}"
+      - -X "github.com/yichenchong/tsdproxy-cloudflare/internal/core.GitCommit={{ .ShortCommit }}"
       - -X "tailscale.com/version.Short={{ .Env.TAILSCALE_VERSION  }}"
       - -X "tailscale.com/version.Long={{ .Env.TAILSCALE_VERSION  }}-TSDProxy"
       - -X "tailscale.com/version.GitCommit={{ .ShortCommit }}"

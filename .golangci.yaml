@@ -80,7 +80,7 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/almeidapaulopt/tsdproxy
+        - github.com/yichenchong/tsdproxy-cloudflare
   exclusions:
     generated: lax
     paths:

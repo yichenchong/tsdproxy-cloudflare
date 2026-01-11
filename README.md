@@ -33,11 +33,11 @@ the project.
 
 ## Docker Images
 
-1. almeidapaulopt/tsdproxy:vx.x.x  - Version x.x.x
-2. almeidapaulopt/tsdproxy:1       - Latest release of version 1.x.x
-3. almeidapaulopt/tsdproxy:2       - Latest release of version 2.x.x (beta)
-4. almeidapaulopt/tsdproxy:latest  - Latest stable
-5. almeidapaulopt/tsdproxy:dev     - Latest Development Build
+1. yichenchong/tsdproxy-cloudflare:vx.x.x  - Version x.x.x
+2. yichenchong/tsdproxy-cloudflare:1       - Latest release of version 1.x.x
+3. yichenchong/tsdproxy-cloudflare:2       - Latest release of version 2.x.x (beta)
+4. yichenchong/tsdproxy-cloudflare:latest  - Latest stable
+5. yichenchong/tsdproxy-cloudflare:dev     - Latest Development Build
 
 ## Core Functionality
 

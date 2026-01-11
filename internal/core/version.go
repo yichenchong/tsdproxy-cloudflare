@@ -16,8 +16,8 @@ var (
 )
 
 const (
-	AppName   = "TSDProxy"
-	AppAuthor = "Paulo Almeida <almeidapaulopt@gmail.com>"
+	AppName   = "TSDProxy-Cloudflare"
+	AppAuthor = "Yi Chen Chong"
 )
 
 func GetVersion() string {

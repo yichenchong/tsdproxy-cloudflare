@@ -21,7 +21,7 @@ weight: 300
 6. Add your container to the same TSDProxy docker network
 7. Disable autodetection with tsdproxy.autodetect="false" in your container
 8. Verify if your case isn't in the next [Common errors](#common-errors)
-9. Still having problems? Send a [Bug report](https://github.com/almeidapaulopt/tsdproxy/issues/new/choose)
+9. Still having problems? Send a [Bug report](https://github.com/yichenchong/tsdproxy-cloudflare/issues/new/choose)
 
 ### Proxies List provider
 

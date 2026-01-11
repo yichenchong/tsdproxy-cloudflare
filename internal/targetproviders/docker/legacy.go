@@ -3,7 +3,7 @@
 
 package docker
 
-import "github.com/almeidapaulopt/tsdproxy/internal/model"
+import "github.com/yichenchong/tsdproxy-cloudflare/internal/model"
 
 func (c *container) getLegacyPort() (model.PortConfig, error) {
 	c.log.Trace().Msg("getLegacyPort")

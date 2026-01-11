@@ -47,7 +47,7 @@ menu:
         type: search
     - name: GitHub
       weight: 5
-      url: "https://github.com/almeidapaulopt/tsdproxy"
+      url: "https://github.com/yichenchong/tsdproxy-cloudflare"
       params:
         icon: github
     - name: Twitter
@@ -86,7 +86,7 @@ params:
 
   editURL:
     enable: true
-    base: "https://github.com/almeidapaulopt/tsdproxy/edit/main/docs/content"
+    base: "https://github.com/yichenchong/tsdproxy-cloudflare/edit/main/docs/content"
 
   # Search
   search:

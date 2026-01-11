@@ -6,8 +6,8 @@ package dashboard
 import (
 	"net/http"
 
-	"github.com/almeidapaulopt/tsdproxy/internal/consts"
-	"github.com/almeidapaulopt/tsdproxy/internal/model"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/consts"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/model"
 
 	"github.com/a-h/templ"
 	datastar "github.com/starfederation/datastar/sdk/go"

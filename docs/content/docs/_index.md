@@ -47,7 +47,7 @@ with MagicDNS.
 
 > [!IMPORTANT]
   TSDProxy is still in active development.
-  Have a question or feedback? Feel free to [open an issue](https://github.com/almeidapaulopt/tsdproxy/issues)!
+  Have a question or feedback? Feel free to [open an issue](https://github.com/yichenchong/tsdproxy-cloudflare/issues)!
 
 ## Next
 

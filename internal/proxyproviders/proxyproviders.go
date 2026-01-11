@@ -8,7 +8,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/almeidapaulopt/tsdproxy/internal/model"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/model"
 )
 
 type (

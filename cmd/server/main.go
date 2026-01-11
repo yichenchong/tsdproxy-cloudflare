@@ -15,11 +15,11 @@ import (
 	"github.com/rs/zerolog"
 
 
-	"github.com/almeidapaulopt/tsdproxy/internal/config"
-	"github.com/almeidapaulopt/tsdproxy/internal/core"
-	"github.com/almeidapaulopt/tsdproxy/internal/dashboard"
-	"github.com/almeidapaulopt/tsdproxy/internal/certmanager"
-	pm "github.com/almeidapaulopt/tsdproxy/internal/proxymanager"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/config"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/core"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/dashboard"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/certmanager"
+	pm "github.com/yichenchong/tsdproxy-cloudflare/internal/proxymanager"
 )
 type WebApp struct {
 	Log          zerolog.Logger
