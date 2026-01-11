@@ -13,7 +13,7 @@ import (
 	"time"
 	"errors"
 
-	"github.com/almeidapaulopt/tsdproxy/internal/config"
+	"github.com/yichenchong/tsdproxy-cloudflare/internal/config"
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/acme"
