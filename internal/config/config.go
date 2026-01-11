@@ -26,8 +26,17 @@ type (
 
 		HTTP HTTPConfig `yaml:"http"`
 		Log  LogConfig  `yaml:"log"`
+		LetsEncrypt LetsEncryptConfig `yaml:"letsEncrypt"`
 
 		ProxyAccessLog bool `validate:"boolean" default:"true" yaml:"proxyAccessLog"`
+	}
+
+	// LetsEncryptConfig stores Let's Encrypt configuration
+	LetsEncryptConfig struct {
+		Enabled bool `validate:"boolean" default:"false" yaml:"enabled"`
+		CloudflareAPIToken string `validate:"omitempty" yaml:"cloudflareApiToken"`
+		DomainName string `validate:"omitempty" yaml:"domainName"`
+		CacheDir string `validate:"dir" default:"/data/certs" yaml:"cacheDir"`
 	}
 
 	// LogConfig stores logging configuration.

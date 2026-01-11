@@ -14,12 +14,13 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/rs/zerolog"
 
+
 	"github.com/almeidapaulopt/tsdproxy/internal/config"
 	"github.com/almeidapaulopt/tsdproxy/internal/core"
 	"github.com/almeidapaulopt/tsdproxy/internal/dashboard"
+	"github.com/almeidapaulopt/tsdproxy/internal/certmanager"
 	pm "github.com/almeidapaulopt/tsdproxy/internal/proxymanager"
 )
-
 type WebApp struct {
 	Log          zerolog.Logger
 	HTTP         *core.HTTPServer
@@ -56,6 +57,21 @@ func InitializeApp() (*WebApp, error) {
 		ProxyManager: proxymanager,
 		Dashboard:    dash,
 	}
+
+	if config.Config.LetsEncrypt.Enabled {
+		certManager, err := certmanager.NewCertManager(config.Config.LetsEncrypt)
+		if err != nil {
+			return nil, fmt.Errorf("creating certmanager: %w", err)
+		}
+
+		err = certManager.SetupCloudflareChallenge(context.Background())
+		if err != nil {
+			return nil, fmt.Errorf("setting up cloudflare challenge: %w", err)
+		}
+
+		go certManager.StartRenewalProcess(context.Background())
+	}
+
 	return webApp, nil
 }
 
@@ -90,15 +106,40 @@ func (app *WebApp) Start() {
 
 		// Start the webserver
 		//
-		srv := http.Server{
-			Addr:              fmt.Sprintf("%s:%d", config.Config.HTTP.Hostname, config.Config.HTTP.Port),
-			ReadHeaderTimeout: core.ReadHeaderTimeout,
-		}
+		if config.Config.LetsEncrypt.Enabled {
+			certManager, err := certmanager.NewCertManager(config.Config.LetsEncrypt)
+			if err != nil {
+				app.Log.Fatal().Err(err).Msg("Error creating certmanager")
+				os.Exit(1)
+			}
 
-		app.Health.SetReady()
+			err = certManager.ListenAndServeTLS(context.Background(), config.Config.HTTP.Hostname, int(config.Config.HTTP.Port), func(listener net.Listener, tlsConfig *tls.Config) error {
+				srv := &http.Server{
+					Addr:              fmt.Sprintf("%s:%d", config.Config.HTTP.Hostname, config.Config.HTTP.Port),
+					ReadHeaderTimeout: core.ReadHeaderTimeout,
+					TLSConfig:         tlsConfig,
+					Handler:           app.HTTP.Handler,
+				}
+				app.Health.SetReady()
+				return srv.Serve(listener)
+			})
 
-		if err := app.HTTP.StartServer(&srv); errors.Is(err, http.ErrServerClosed) {
-			app.Log.Fatal().Err(err).Msg("shutting down the server")
+			if err != nil {
+				app.Log.Fatal().Err(err).Msg("Error starting TLS server")
+				os.Exit(1)
+			}
+			return
+		} else {
+			srv := http.Server{
+				Addr:              fmt.Sprintf("%s:%d", config.Config.HTTP.Hostname, config.Config.HTTP.Port),
+				ReadHeaderTimeout: core.ReadHeaderTimeout,
+			}
+
+			app.Health.SetReady()
+
+			if err := app.HTTP.StartServer(&srv); errors.Is(err, http.ErrServerClosed) {
+				app.Log.Fatal().Err(err).Msg("shutting down the server")
+			}
 		}
 	}()
 
